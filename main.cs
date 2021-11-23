@@ -4,7 +4,7 @@ using System.Collections.Generic;
 class Program {
 	
 	static void Main(string[] args) {
-		string program = ">>>>>*<<<<<[*>]<[<*]";
+		string program = "*>*>*>*>*><<<<<*[>*][*<]";
 		bool[] dataBand = new bool[10/*2048*/];
 		Stack<int> bracketOpen = new Stack<int>();
 		uint index = 0;
@@ -16,11 +16,17 @@ class Program {
 			{
 				case '>':
 					//Console.WriteLine("> ");
-					index++;
+					if(index < (uint)(dataBand.Length - 1))
+						index++;
+					else
+						index = 0;
 					break;
 				case '<':
 					//Console.WriteLine("< ");
-					index--;
+					if(index > 0)
+						index--;
+					else
+						index = (uint)(dataBand.Length - 1);
 					break;
 				case '*':
 					//Console.WriteLine("* ");
@@ -31,13 +37,14 @@ class Program {
 					break;
 				case '[':
 					//Console.WriteLine("[ i={0}", i);
-					if(!dataBand[index])
+					//if(!dataBand[index])
 						bracketOpen.Push(i);
 					break;
 				case ']':
-					//Console.WriteLine("] ");
+					//Console.WriteLine("] i={0}", index);
 					if(bracketOpen.Count > 0)
-						i = bracketOpen.Pop() - 1;
+						if(!dataBand[index/*bracketOpen.Peek()-1*/])
+							i = bracketOpen.Pop() - 1;
 					break;
 				case ' ':
 				default:
