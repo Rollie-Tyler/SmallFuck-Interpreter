@@ -1,7 +1,9 @@
 #include <stdio.h>
 
-int programSize = 50;
-char program[50] = ">>>>>>>>>>*<<<<<<<<<<*[>*<*>]*<*[<*>*<]";
+//int programSize = 50;
+#define programSize 50
+char program[programSize] = ">>>>>>>>>>*<<<<<<<<<<*[>*<*>]*<*[<*>*<]";
+//char program[programSize] = "*>>*>*>";
 int dataSize = 20;
 int data[20];
 int stack[5];
@@ -9,10 +11,44 @@ int stackIndex = -1;
 unsigned char debug = 1;
 int jump = 0;
 
+typedef struct openClose {
+	int open;
+	int close;
+} stOpenClose;
+
 int main(void)
 {
+	int indexOpen = -1;
+	int indexClose = 0;
+	stOpenClose bracket[programSize];
+
 	int index = 0;
 	int pc = 0;
+
+	for(int i=0; i<programSize;i++)
+	{
+		bracket[i].open = 0;
+		bracket[i].close = 0;
+	}
+
+	for(int i=0; i<programSize;i++)
+	{
+		switch((int)program[i])
+		{
+			case 91:
+				indexOpen++;
+				bracket[indexOpen].open = i;
+				break;
+			case 93:
+				indexClose = indexOpen;
+				while(bracket[indexClose].close != 0)
+					indexClose--;
+				bracket[indexClose].close = i;
+				break;
+		}
+	}
+
+
 	for(int i=0; i<programSize;jump?jump=0:i++)
 	{
 		char c = program[i];
@@ -33,21 +69,32 @@ int main(void)
 			case 91:
 				if(!data[pc])
 				{
-					while((int)program[i] != 93 && i < programSize)
-						i++;
+					//while((int)program[i] != 93 && i < programSize)
+					//	i++;
+					for(int k=0;k<programSize;k++)
+					{
+						if(bracket[k].open == i)
+						{
+							i = bracket[k].close;
+							break;
+						}
+					}
 				}
 				else {
-					index++;
-					stack[index] = i;
+					//index++;
+					//stack[index] = i;
+					//i = bracket[index];
 				}
-				//printf("[\ - stack=%d\r\n", stack[index]);
 				break;
 			case 93:
-				if(index>0)
+				for(int k=0;k<programSize;k++)
 				{
-					i = stack[index];
-					index--;
-					jump = 1;
+					if(bracket[k].close == i)
+					{
+						i = bracket[k].open;
+						jump = 1;
+						break;
+					}
 				}
 				//printf("] - stack=%d\r\n", i);
 				break;
